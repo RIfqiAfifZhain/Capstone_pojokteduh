@@ -1,6 +1,9 @@
 1. Prerequisites (Wajib Terinstal)
+
 Node.js (v18+)
+
 PostgreSQL (v15+)
+
 Git
 
 2. Database Setup (PostgreSQL)
