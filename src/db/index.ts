@@ -1,9 +1,11 @@
+import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
-import * as schema from "./schemas/index.js";
+// Ambil data dari file sebelah (users.schema.ts)
+import * as schema from "./schemas/users.schema.js"; 
 
-const { Pool } = pg;
-const pool = new Pool({
+const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
 });
-export const db = drizzle(pool, { schema: schema });
+
+export const db = drizzle(pool, { schema });
