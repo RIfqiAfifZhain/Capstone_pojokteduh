@@ -1,2 +1,3 @@
 export * from "./users.schema.js";
-// Nanti kalau ada tabel baru, tambah di sini
+export * from "./spots.schema.js";
+export * from "./reviews.schema.js";

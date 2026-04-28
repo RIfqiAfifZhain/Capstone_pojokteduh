@@ -3,6 +3,8 @@ import cors from "cors"; // Wajib agar Frontend bisa akses
 import authRoutes from "./routes/auth.routes.js";
 import usersRoutes from "./routes/users.routes.js";
 import adminsRoutes from "./routes/admins.routes.js";
+import spotsRoutes from "./routes/spots.routes.js";
+import reviewsRoutes from "./routes/reviews.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import "dotenv/config"; // Pastikan env terbaca
 
@@ -17,6 +19,8 @@ app.use(express.json()); // Supaya bisa baca Body JSON
 app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
 app.use("/admins", adminsRoutes);
+app.use("/spots", spotsRoutes);
+app.use("/reviews", reviewsRoutes);
 
 // 3. Error Handler (Harus di bawah routes)
 app.use(errorHandler);
