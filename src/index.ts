@@ -6,6 +6,7 @@ import adminsRoutes from "./routes/admins.routes.js";
 import spotsRoutes from "./routes/spots.routes.js";
 import reviewsRoutes from "./routes/reviews.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import bookmarksRoutes from "./routes/bookmarks.routes.js";
 import "dotenv/config"; // Pastikan env terbaca
 
 const app = express();
@@ -21,6 +22,7 @@ app.use("/users", usersRoutes);
 app.use("/admins", adminsRoutes);
 app.use("/spots", spotsRoutes);
 app.use("/reviews", reviewsRoutes);
+app.use("/bookmarks", bookmarksRoutes);
 
 // 3. Error Handler (Harus di bawah routes)
 app.use(errorHandler);

@@ -45,17 +45,37 @@ export const searchSpots = async (req: Request, res: Response): Promise<void> =>
     }
 
     // Fetch matching spots
-    // If no conditions, it returns all spots
     const query = conditions.length > 0
       ? db.select().from(spots).where(and(...conditions))
       : db.select().from(spots);
 
     const result = await query;
 
+    // 🌟 STRATEGI OTOMATIS: Tambahkan mapLink dan slug dinamis di sini
+    const transformedResult = result.map((spot) => {
+      // Konstruksi URL Google Maps Search berbasis nama tempat + wilayah Jakarta
+      const googleMapsQuery = encodeURIComponent(`${spot.name} Jakarta`);
+      const generatedMapLink = `https://www.google.com/maps/search/?api=1&query=${googleMapsQuery}`;
+
+      // Buat slug otomatis dari nama tempat (misal: "GoWork Fatmawati" -> "gowork-fatmawati")
+      // Ini sebagai backup aman jika kolom slug belum kamu push ke PostgreSQL
+      const generatedSlug = spot.name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "") // Hapus karakter aneh
+        .replace(/\s+/g, "-")         // Ganti spasi dengan tanda minus (-)
+        .replace(/-+/g, "-");         // Bersihkan jika minusnya ganda
+
+      return {
+        ...spot,
+        slug: generatedSlug,       // Frontend butuh ini untuk pindah halaman detail
+        mapLink: generatedMapLink, // Frontend butuh ini untuk tombol "Go There"
+      };
+    });
+
     res.status(200).json({
       status: "success",
       message: "Spots retrieved successfully",
-      data: result,
+      data: transformedResult, // Kirim data yang sudah di-transform
     });
   } catch (error) {
     console.error("Error searching spots:", error);
@@ -65,3 +85,52 @@ export const searchSpots = async (req: Request, res: Response): Promise<void> =>
     });
   }
 };
+
+export const getSpotBySlug = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { slug } = req.params;
+
+    // 1. Ambil semua spots untuk dicocokkan (karena slug dihitung dinamis dari nama)
+    const allSpots = await db.select().from(spots);
+
+    // 2. Cari spot yang hasil kalkulasi slug-nya cocok dengan parameter
+    const matchedSpot = allSpots.find((spot) => {
+      const generatedSlug = spot.name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+      
+      return generatedSlug === slug;
+    });
+
+    if (!matchedSpot) {
+      res.status(404).json({
+        status: "error",
+        message: "Spot tidak ditemukan",
+      });
+      return;
+    }
+
+    // 3. Gabungkan mapLink dan slug dinamis untuk response detailnya
+    const googleMapsQuery = encodeURIComponent(`${matchedSpot.name} Jakarta`);
+    const transformedSpot = {
+      ...matchedSpot,
+      slug: slug,
+      mapLink: `https://www.google.com/maps/search/?api=1&query=${googleMapsQuery}`,
+    };
+
+    res.status(200).json({
+      status: "success",
+      message: "Spot detail retrieved successfully",
+      data: transformedSpot,
+    });
+  } catch (error) {
+    console.error("Error getting spot detail:", error);
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+};
+
