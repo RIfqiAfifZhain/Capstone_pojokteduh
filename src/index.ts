@@ -8,39 +8,51 @@ import reviewsRoutes from "./routes/reviews.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import bookmarksRoutes from "./routes/bookmarks.routes.js";
 import "dotenv/config"; 
-import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./utils/swagger.js";
 
 const app = express();
 const PORT = process.env.PORT || 8080; 
 
 // ==========================================
-// KONFIGURASI SWAGGER VERCEL-PROOF
+// KONFIGURASI SWAGGER (VERSI AMAN VERCEL)
 // ==========================================
-const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
 
-// 1. Rute Dokumentasi Interaktif (Swagger UI)
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    customCssUrl: CSS_URL,
-    customJs: [
-      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-bundle.js",
-      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui-standalone-preset.js",
-    ],
-  })
-);
-
-// 2. Rute Ekspor JSON (Fallback untuk Postman Tim Frontend)
+// 1. Rute Ekspor JSON (Ini yang dicari oleh Petstore & Postman)
 app.get("/api-docs.json", (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.send(swaggerSpec);
 });
 
-// 3. Rute Beranda (Agar halaman depan Vercel tidak "Cannot GET /")
+// 2. Rute UI Manual (Tampilan langsung di web kamu)
+app.get("/api-docs", (req, res) => {
+  const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <title>API Pojok Teduh</title>
+      <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui.css" />
+    </head>
+    <body>
+      <div id="swagger-ui"></div>
+      <script src="https://unpkg.com/swagger-ui-dist@5.11.0/swagger-ui-bundle.js" crossorigin></script>
+      <script>
+        window.onload = () => {
+          window.ui = SwaggerUIBundle({
+            url: '/api-docs.json',
+            dom_id: '#swagger-ui',
+          });
+        };
+      </script>
+    </body>
+    </html>
+  `;
+  res.send(html);
+});
+
+// 3. Rute Beranda
 app.get("/", (req, res) => {
-  res.send("✅ API Pojok Teduh Berjalan! Silakan akses /api-docs untuk dokumentasi.");
+  res.send("✅ API Pojok Teduh Berjalan! Silakan akses /api-docs untuk melihat dokumentasi.");
 });
 
 // ==========================================
