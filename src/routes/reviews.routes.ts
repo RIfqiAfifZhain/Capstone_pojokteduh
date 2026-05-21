@@ -6,7 +6,6 @@ import { addReviewSchema } from "../schemas/reviews.schema.js";
 
 const router = Router();
 
-// POST /reviews → Wajib login, validasi body, lalu upsert review
 router.post("/", authenticate, validate(addReviewSchema), addOrUpdateReview);
 
 export default router;

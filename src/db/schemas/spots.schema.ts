@@ -9,8 +9,14 @@ export const moodEnum = pgEnum('mood', ['relaxed', 'focused']);
 export const spots = pgTable("spots", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
+  category: varchar("category", { length: 100 }),
+  address: text("address"),
+  operationalHours: text("operational_hours"), 
+  latitude: numeric("latitude", { precision: 10, scale: 8 }),
+  longitude: numeric("longitude", { precision: 11, scale: 8 }),
+  photoUrl: text("photo_url"), // untuk URL Cloudinary
   description: text("description"),
-  facilities: text("facilities"),
+  facilities: text("facilities"), 
   spotType: spotTypeEnum("spot_type").notNull(),
   crowdedness: crowdednessEnum("crowdedness").notNull(),
   atmosphere: atmosphereEnum("atmosphere").notNull(),

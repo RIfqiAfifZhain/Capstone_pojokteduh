@@ -32,3 +32,25 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     });
   }
 };
+
+export const isAdmin = (req: Request, res: Response, next: NextFunction): void => {
+  const user = (req as any).user; 
+
+  if (!user) {
+    res.status(401).json({ 
+      status: "error", 
+      message: "Unauthorized: Token tidak ditemukan" 
+    });
+    return;
+  }
+
+  if (user.role !== "ADMIN") {
+    res.status(403).json({ 
+      status: "error", 
+      message: "Forbidden: Akses ditolak! Hanya Admin yang diizinkan." 
+    });
+    return;
+  }
+
+  next(); 
+};
