@@ -31,3 +31,5 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`🚀 Server BERHASIL JALAN di http://localhost:${PORT}`);
 });
+
+export default app;
