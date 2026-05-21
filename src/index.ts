@@ -7,7 +7,6 @@ import spotsRoutes from "./routes/spots.routes.js";
 import reviewsRoutes from "./routes/reviews.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import bookmarksRoutes from "./routes/bookmarks.routes.js";
-import "dotenv/config"; 
 import { swaggerSpec } from "./utils/swagger.js";
 
 const app = express();
