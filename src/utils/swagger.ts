@@ -21,8 +21,12 @@ const options: swaggerJsdoc.Options = {
       },
     ],
   },
-  // GPS khusus untuk Vercel agar bisa menemukan file rute
-  apis: [path.join(process.cwd(), "src/routes/*.ts")], 
+  apis: [
+    path.join(process.cwd(), "src/routes/*.ts"),
+    path.join(process.cwd(), "dist/routes/*.js"),
+    "**/*.ts",
+    "**/*.js"
+  ], 
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
